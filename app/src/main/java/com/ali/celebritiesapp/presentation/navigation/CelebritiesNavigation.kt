@@ -13,7 +13,7 @@ fun CelebritiesNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = CelebritiesScreens.SplashScreen.name) {
         composable(CelebritiesScreens.SplashScreen.name) {
-            SplashScreen()
+            SplashScreen(navController = navController)
         }
 
         composable(CelebritiesScreens.HomeScreen.name) {

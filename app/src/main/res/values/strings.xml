@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">CelebritiesApp</string>
+    <string name="app_name">Celebrities Application</string>
+    <string name="splash_screen_description">Explore Celebrities Performances</string>
 </resources>
