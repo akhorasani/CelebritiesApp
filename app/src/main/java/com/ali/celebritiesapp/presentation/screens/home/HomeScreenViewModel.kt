@@ -8,8 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ali.celebritiesapp.common.Resource
 import com.ali.celebritiesapp.data.remote.model.Artist
+import com.ali.celebritiesapp.data.remote.model.ArtistItem
 import com.ali.celebritiesapp.data.remote.model.Venue
+import com.ali.celebritiesapp.data.remote.model.VenueItem
 import com.ali.celebritiesapp.domain.repository.CelebritiesRepository
+import com.ali.celebritiesapp.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,22 +22,23 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(private val repository: CelebritiesRepository) :
     ViewModel() {
 
-    var artists: List<Artist> by mutableStateOf(emptyList())
-    var venues: List<Venue> by mutableStateOf(emptyList())
+    var artists: List<ArtistItem> by mutableStateOf(emptyList())
+    var venues: List<VenueItem> by mutableStateOf(emptyList())
 
     var isLoading: Boolean by mutableStateOf(true)
 
     init {
         getArtists()
+        getVenues()
     }
 
-    fun getArtists() {
+    private fun getArtists() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 when (val response = repository.getArtists()) {
                     is Resource.Success -> {
                         if (!response.data.isNullOrEmpty()) {
-                            artists = response.data
+                            generateArtistImage(response.data)
                             isLoading = false
                         } else {
                             Log.i("Network", "showArtists: Failed to load artists")
@@ -56,13 +60,13 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
         }
     }
 
-    fun getVenues() {
+    private fun getVenues() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 when (val response = repository.getVenues()) {
                     is Resource.Success -> {
                         if (!response.data.isNullOrEmpty()) {
-                            venues = response.data
+                            generateVenueImage(response.data)
                             isLoading = false
                         } else {
                             Log.i("Network", "showVenues: Failed to load venues")
@@ -83,4 +87,27 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
             }
         }
     }
+
+    private fun generateArtistImage(artists: List<Artist>) {
+        this.artists = artists.map { artist ->
+            ArtistItem(
+                genre = artist.genre,
+                id = artist.id,
+                name = artist.name,
+                imageUrl = Constants.IMAGE_BASE_URL + Constants.ARTISTS + artist.name + Constants.PNG
+            )
+        }
+    }
+
+    private fun generateVenueImage(venues: List<Venue>) {
+        this.venues = venues.map { venue ->
+            VenueItem(
+                id = venue.id,
+                name = venue.name,
+                sortId = venue.sortId,
+                imageUrl = Constants.IMAGE_BASE_URL + Constants.VENUES + venue.name + Constants.PNG
+            )
+        }
+    }
+
 }
