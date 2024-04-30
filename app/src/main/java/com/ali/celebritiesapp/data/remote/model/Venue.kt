@@ -1,7 +1,7 @@
 package com.ali.celebritiesapp.data.remote.model
 
-data class ArtistsItem(
-    val genre: String,
+data class Venue(
     val id: Int,
-    val name: String
+    val name: String,
+    val sortId: Int
 )

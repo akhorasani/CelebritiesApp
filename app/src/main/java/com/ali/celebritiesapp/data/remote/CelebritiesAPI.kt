@@ -1,5 +1,9 @@
-package com.ali.celebritiesapp.data.remote.model
+package com.ali.celebritiesapp.data.remote
 
+import com.ali.celebritiesapp.data.remote.model.Artist
+import com.ali.celebritiesapp.data.remote.model.Performances
+import com.ali.celebritiesapp.data.remote.model.PerformancesItem
+import com.ali.celebritiesapp.data.remote.model.Venue
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -8,10 +12,10 @@ import javax.inject.Singleton
 @Singleton
 interface CelebritiesAPI {
     @GET("/artists")
-    suspend fun getArtists(): Artists
+    suspend fun getArtists(): List<Artist>
 
     @GET("/artists/{id}")
-    suspend fun getArtistById(@Path("id") id: Int): ArtistsItem
+    suspend fun getArtistById(@Path("id") id: Int): Artist
 
     @GET("/artists/{id}/performances")
     suspend fun getArtistPerformances(
@@ -21,10 +25,10 @@ interface CelebritiesAPI {
     ): Performances
 
     @GET("/venues")
-    suspend fun getVenues(): Venues
+    suspend fun getVenues(): List<Venue>
 
     @GET("/venues/{id}")
-    suspend fun getVenueById(@Path("id") id: Int): VenuesItem
+    suspend fun getVenueById(@Path("id") id: Int): Venue
 
     @GET("/venues/{id}/performances")
     suspend fun getVenuePerformances(

@@ -4,5 +4,6 @@ data class PerformancesItem(
     val artistId: Int,
     val date: String,
     val id: Int,
-    val venueId: Int
+    val venueId: Int? = null,
+    val venueItem: Venue? = null,
 )

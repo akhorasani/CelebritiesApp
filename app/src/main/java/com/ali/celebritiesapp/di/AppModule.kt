@@ -1,6 +1,8 @@
 package com.ali.celebritiesapp.di
 
-import com.ali.celebritiesapp.data.remote.model.CelebritiesAPI
+import com.ali.celebritiesapp.data.remote.CelebritiesAPI
+import com.ali.celebritiesapp.data.repository.CelebritiesRepositoryImpl
+import com.ali.celebritiesapp.domain.repository.CelebritiesRepository
 import com.ali.celebritiesapp.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -13,6 +15,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideCelebritiesRepository(api: CelebritiesAPI): CelebritiesRepository {
+        return CelebritiesRepositoryImpl(api)
+    }
+
     @Singleton
     @Provides
     fun provideCelebritiesAPI(): CelebritiesAPI {
