@@ -1,5 +1,7 @@
 package com.ali.celebritiesapp.presentation.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -11,9 +13,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ali.celebritiesapp.presentation.screens.SplashScreen
 import com.ali.celebritiesapp.presentation.screens.details.DetailsScreen
+import com.ali.celebritiesapp.presentation.screens.details.DetailsScreenViewModel
 import com.ali.celebritiesapp.presentation.screens.home.HomeScreen
 import com.ali.celebritiesapp.presentation.screens.home.HomeScreenViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
@@ -44,7 +48,7 @@ fun CelebritiesNavigation() {
         ) { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type")
             val entityId = backStackEntry.arguments?.getInt("entityId")
-            val viewModel = hiltViewModel<HomeScreenViewModel>()
+            val viewModel = hiltViewModel<DetailsScreenViewModel>()
 
             if (entityId != null && type != null) {
                 DetailsScreen(navController = navController, type = type, entityId = entityId, viewModel = viewModel)

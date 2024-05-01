@@ -1,5 +1,7 @@
 package com.ali.celebritiesapp.presentation.screens.details
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -15,29 +17,33 @@ import com.ali.celebritiesapp.R
 import com.ali.celebritiesapp.components.ArtistDetails
 import com.ali.celebritiesapp.components.CelebritiesTopAppBar
 import com.ali.celebritiesapp.components.VenueDetails
-import com.ali.celebritiesapp.data.remote.model.ArtistItem
-import com.ali.celebritiesapp.data.remote.model.VenueItem
+import com.ali.celebritiesapp.domain.model.ArtistItem
+import com.ali.celebritiesapp.domain.model.PerformanceItem
+import com.ali.celebritiesapp.domain.model.VenueItem
 import com.ali.celebritiesapp.presentation.navigation.CelebritiesScreens
-import com.ali.celebritiesapp.presentation.screens.home.HomeScreenViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalMaterial3Api
 @Composable
 fun DetailsScreen(
     navController: NavHostController,
     type: String,
     entityId: Int,
-    viewModel: HomeScreenViewModel,
+    viewModel: DetailsScreenViewModel,
 ) {
-    var artist = emptyList<ArtistItem>()
-    var venue = emptyList<VenueItem>()
+    var artist = ArtistItem(genre = "", id = 0, name = "", imageUrl = "")
+    var venue = VenueItem(id = 0, name = "", sortId = 0, imageUrl = "")
+    var performances = emptyList<PerformanceItem>()
+
     if (type == stringResource(id = R.string.artist)) {
-        artist = viewModel.artists.filter { artistItem ->
-            artistItem.id == entityId
-        }
+        viewModel.getArtistById(entityId)
+        artist = viewModel.artistInfo
+        viewModel.getArtistPerformances(entityId)
+        performances = viewModel.performances
+
     } else if (type == stringResource(id = R.string.venue)) {
-        venue = viewModel.venues.filter { venueItem ->
-            venueItem.id == entityId
-        }
+        viewModel.getVenueById(entityId)
+        venue = viewModel.venueInfo
     }
 
     Scaffold(
@@ -56,12 +62,11 @@ fun DetailsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (artist.isNotEmpty()) {
-                ArtistDetails(artist = artist.first())
-            } else if (venue.isNotEmpty()) {
-                VenueDetails(venue = venue.first())
+            if (type == stringResource(id = R.string.artist)) {
+                ArtistDetails(artist = artist, performances = performances)
+            } else if (type == stringResource(id = R.string.venue)) {
+                VenueDetails(venue = venue)
             }
         }
     }
-
 }

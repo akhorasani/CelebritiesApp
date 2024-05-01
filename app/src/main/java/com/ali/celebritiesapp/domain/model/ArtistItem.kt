@@ -1,4 +1,4 @@
-package com.ali.celebritiesapp.data.remote.model
+package com.ali.celebritiesapp.domain.model
 
 data class ArtistItem(
     val genre: String,

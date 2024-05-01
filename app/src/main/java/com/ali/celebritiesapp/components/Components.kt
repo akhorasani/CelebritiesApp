@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -43,8 +45,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.ali.celebritiesapp.R
-import com.ali.celebritiesapp.data.remote.model.ArtistItem
-import com.ali.celebritiesapp.data.remote.model.VenueItem
+import com.ali.celebritiesapp.domain.model.ArtistItem
+import com.ali.celebritiesapp.domain.model.PerformanceItem
+import com.ali.celebritiesapp.domain.model.VenueItem
 import com.ali.celebritiesapp.presentation.screens.home.HomeScreenViewModel
 
 @Composable
@@ -114,14 +117,14 @@ fun ArtistList(viewModel: HomeScreenViewModel, onItemClicked: (String, Int) -> U
 }
 
 @Composable
-fun ArtistRow(artist: ArtistItem, onItemClicked: (String , Int) -> Unit) {
+fun ArtistRow(artist: ArtistItem, onItemClicked: (String, Int) -> Unit) {
     Card(modifier = Modifier
-    .clickable {
-        onItemClicked("Artist", artist.id)
-    }
-    .fillMaxWidth()
-    .height(110.dp)
-    .padding(5.dp),
+        .clickable {
+            onItemClicked("Artist", artist.id)
+        }
+        .fillMaxWidth()
+        .height(110.dp)
+        .padding(5.dp),
 //        colors = CardDefaults.cardColors(containerColor = Color(0xFF673AB7)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF8000ff)),
         shape = RectangleShape,
@@ -224,13 +227,15 @@ fun VenueRow(venue: VenueItem, onItemClicked: (String, Int) -> Unit) {
 }
 
 @Composable
-fun ArtistDetails(artist: ArtistItem) {
+fun ArtistDetails(artist: ArtistItem, performances: List<PerformanceItem>) {
     Column(
         modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
         DetailsTopRow(artist.name, artist.imageUrl)
+        Spacer(modifier = Modifier.height(14.dp))
+        ArtistPerformances(performances)
     }
 }
 
@@ -278,8 +283,73 @@ fun DetailsTopRow(name: String, imageUrl: String) {
         text = stringResource(id = R.string.performances),
         fontWeight = FontWeight.Bold,
         color = Color(0xFF7D0C91),
-        style = MaterialTheme.typography.headlineLarge,
+        style = MaterialTheme.typography.headlineMedium,
     )
+}
+
+@Composable
+fun ArtistPerformances(performances: List<PerformanceItem>) {
+    LazyRow {
+        items(performances) { performance ->
+            Card(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(240.dp),
+                elevation = CardDefaults.cardElevation(5.dp)
+            ) {
+                Column {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(performance.venue.imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = stringResource(id = R.string.venue_picture),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .padding(bottom = 10.dp)
+                    )
+                    Row(modifier = Modifier.padding(bottom = 5.dp)) {
+                        Text(
+                            text = "Venue:",
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                        Text(
+                            text = performance.venue.name,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color.Black,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Row {
+                        Text(
+                            text = "Date:",
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                        Text(
+                            text = performance.date,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+
+                }
+            }
+
+        }
+    }
 }
 
 

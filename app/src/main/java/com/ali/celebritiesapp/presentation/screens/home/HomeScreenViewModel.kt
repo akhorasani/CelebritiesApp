@@ -8,14 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ali.celebritiesapp.common.Resource
 import com.ali.celebritiesapp.data.remote.model.Artist
-import com.ali.celebritiesapp.data.remote.model.ArtistItem
+import com.ali.celebritiesapp.data.remote.model.Performance
 import com.ali.celebritiesapp.data.remote.model.Venue
-import com.ali.celebritiesapp.data.remote.model.VenueItem
+import com.ali.celebritiesapp.domain.model.ArtistItem
+import com.ali.celebritiesapp.domain.model.VenueItem
 import com.ali.celebritiesapp.domain.repository.CelebritiesRepository
 import com.ali.celebritiesapp.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,13 +43,13 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                             generateArtistImage(response.data)
                             isLoading = false
                         } else {
-                            Log.i("Network", "showArtists: Failed to load artists")
+                            Log.d("Network", "showArtists: Failed to load artists")
                         }
                     }
 
                     is Resource.Error -> {
                         isLoading = false
-                        Log.i("Network", "showArtists: Failed to load artists")
+                        Log.d("Network", "showArtists: Failed to load artists")
                     }
 
                     else -> {
@@ -69,13 +71,13 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                             generateVenueImage(response.data)
                             isLoading = false
                         } else {
-                            Log.i("Network", "showVenues: Failed to load venues")
+                            Log.d("Network", "showVenues: Failed to load venues")
                         }
                     }
 
                     is Resource.Error -> {
                         isLoading = false
-                        Log.i("Network", "showVenues: Failed to load venues")
+                        Log.d("Network", "showVenues: Failed to load venues")
                     }
 
                     else -> {
