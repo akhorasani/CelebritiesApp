@@ -1,8 +1,10 @@
 package com.ali.celebritiesapp.data.remote
 
 import com.ali.celebritiesapp.data.remote.model.Artist
+import com.ali.celebritiesapp.data.remote.model.ArtistPerformance
 import com.ali.celebritiesapp.data.remote.model.Performance
 import com.ali.celebritiesapp.data.remote.model.Venue
+import com.ali.celebritiesapp.data.remote.model.VenuePerformance
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -21,7 +23,7 @@ interface CelebritiesAPI {
         @Path("id") id: Int,
         @Query("from") from: String? = null,
         @Query("to") to: String? = null
-    ): List<Performance>
+    ): List<ArtistPerformance>
 
     @GET("/venues")
     suspend fun getVenues(): List<Venue>
@@ -34,7 +36,7 @@ interface CelebritiesAPI {
         @Path("id") id: Int,
         @Query("from") from: String? = null,
         @Query("to") to: String? = null
-    ): List<Performance>
+    ): List<VenuePerformance>
 
     @GET("/performances")
     suspend fun getPerformances(

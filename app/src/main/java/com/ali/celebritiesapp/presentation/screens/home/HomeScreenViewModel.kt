@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ali.celebritiesapp.common.Resource
 import com.ali.celebritiesapp.data.remote.model.Artist
-import com.ali.celebritiesapp.data.remote.model.Performance
 import com.ali.celebritiesapp.data.remote.model.Venue
 import com.ali.celebritiesapp.domain.model.ArtistItem
 import com.ali.celebritiesapp.domain.model.VenueItem
@@ -17,7 +16,6 @@ import com.ali.celebritiesapp.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel

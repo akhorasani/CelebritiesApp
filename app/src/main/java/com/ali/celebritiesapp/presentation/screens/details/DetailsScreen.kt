@@ -18,8 +18,9 @@ import com.ali.celebritiesapp.components.ArtistDetails
 import com.ali.celebritiesapp.components.CelebritiesTopAppBar
 import com.ali.celebritiesapp.components.VenueDetails
 import com.ali.celebritiesapp.domain.model.ArtistItem
-import com.ali.celebritiesapp.domain.model.PerformanceItem
+import com.ali.celebritiesapp.domain.model.ArtistPerformanceItem
 import com.ali.celebritiesapp.domain.model.VenueItem
+import com.ali.celebritiesapp.domain.model.VenuePerformanceItem
 import com.ali.celebritiesapp.presentation.navigation.CelebritiesScreens
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -33,17 +34,20 @@ fun DetailsScreen(
 ) {
     var artist = ArtistItem(genre = "", id = 0, name = "", imageUrl = "")
     var venue = VenueItem(id = 0, name = "", sortId = 0, imageUrl = "")
-    var performances = emptyList<PerformanceItem>()
+    var artistPerformances = emptyList<ArtistPerformanceItem>()
+    var venuePerformances = emptyList<VenuePerformanceItem>()
 
     if (type == stringResource(id = R.string.artist)) {
         viewModel.getArtistById(entityId)
         artist = viewModel.artistInfo
         viewModel.getArtistPerformances(entityId)
-        performances = viewModel.performances
+        artistPerformances = viewModel.artistPerformances
 
     } else if (type == stringResource(id = R.string.venue)) {
         viewModel.getVenueById(entityId)
         venue = viewModel.venueInfo
+        viewModel.getVenuePerformances(entityId)
+        venuePerformances = viewModel.venuePerformances
     }
 
     Scaffold(
@@ -63,9 +67,9 @@ fun DetailsScreen(
                 .padding(paddingValues)
         ) {
             if (type == stringResource(id = R.string.artist)) {
-                ArtistDetails(artist = artist, performances = performances)
+                ArtistDetails(artist = artist, performances = artistPerformances)
             } else if (type == stringResource(id = R.string.venue)) {
-                VenueDetails(venue = venue)
+                VenueDetails(venue = venue, performances = venuePerformances)
             }
         }
     }

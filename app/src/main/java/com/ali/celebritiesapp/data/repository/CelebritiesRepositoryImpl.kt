@@ -3,8 +3,10 @@ package com.ali.celebritiesapp.data.repository
 import com.ali.celebritiesapp.common.Resource
 import com.ali.celebritiesapp.data.remote.CelebritiesAPI
 import com.ali.celebritiesapp.data.remote.model.Artist
+import com.ali.celebritiesapp.data.remote.model.ArtistPerformance
 import com.ali.celebritiesapp.data.remote.model.Performance
 import com.ali.celebritiesapp.data.remote.model.Venue
+import com.ali.celebritiesapp.data.remote.model.VenuePerformance
 import com.ali.celebritiesapp.domain.repository.CelebritiesRepository
 import javax.inject.Inject
 
@@ -36,7 +38,7 @@ class CelebritiesRepositoryImpl @Inject constructor(private val api: Celebrities
         id: Int,
         from: String?,
         to: String?
-    ): Resource<List<Performance>> {
+    ): Resource<List<ArtistPerformance>> {
         val response = try {
             Resource.Loading(data = true)
             if (from != null || to != null) {
@@ -77,7 +79,7 @@ class CelebritiesRepositoryImpl @Inject constructor(private val api: Celebrities
         id: Int,
         from: String?,
         to: String?
-    ): Resource<List<Performance>> {
+    ): Resource<List<VenuePerformance>> {
         val response = try {
             Resource.Loading(data = true)
             if (from != null || to != null) {

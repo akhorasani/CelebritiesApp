@@ -46,8 +46,9 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.ali.celebritiesapp.R
 import com.ali.celebritiesapp.domain.model.ArtistItem
-import com.ali.celebritiesapp.domain.model.PerformanceItem
+import com.ali.celebritiesapp.domain.model.ArtistPerformanceItem
 import com.ali.celebritiesapp.domain.model.VenueItem
+import com.ali.celebritiesapp.domain.model.VenuePerformanceItem
 import com.ali.celebritiesapp.presentation.screens.home.HomeScreenViewModel
 
 @Composable
@@ -227,7 +228,7 @@ fun VenueRow(venue: VenueItem, onItemClicked: (String, Int) -> Unit) {
 }
 
 @Composable
-fun ArtistDetails(artist: ArtistItem, performances: List<PerformanceItem>) {
+fun ArtistDetails(artist: ArtistItem, performances: List<ArtistPerformanceItem>) {
     Column(
         modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -240,7 +241,7 @@ fun ArtistDetails(artist: ArtistItem, performances: List<PerformanceItem>) {
 }
 
 @Composable
-fun VenueDetails(venue: VenueItem) {
+fun VenueDetails(venue: VenueItem, performances: List<VenuePerformanceItem>) {
     Column(
         modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -248,7 +249,7 @@ fun VenueDetails(venue: VenueItem) {
     ) {
         DetailsTopRow(venue.name, venue.imageUrl)
         Spacer(modifier = Modifier.height(14.dp))
-
+        VenuePerformances(performances)
     }
 }
 
@@ -288,7 +289,7 @@ fun DetailsTopRow(name: String, imageUrl: String) {
 }
 
 @Composable
-fun ArtistPerformances(performances: List<PerformanceItem>) {
+fun ArtistPerformances(performances: List<ArtistPerformanceItem>) {
     LazyRow {
         items(performances) { performance ->
             Card(
@@ -345,6 +346,87 @@ fun ArtistPerformances(performances: List<PerformanceItem>) {
                         )
                     }
 
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
+fun VenuePerformances(performances: List<VenuePerformanceItem>) {
+    LazyRow {
+        items(performances) { performance ->
+            Card(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(255.dp),
+                elevation = CardDefaults.cardElevation(5.dp)
+            ) {
+                Column {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(performance.artist.imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = stringResource(id = R.string.artist_picture),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .padding(bottom = 10.dp)
+                    )
+                    Row(modifier = Modifier.padding(bottom = 5.dp)) {
+                        Text(
+                            text = "Artist:",
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                        Text(
+                            text = performance.artist.name,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color.Black,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Row(modifier = Modifier.padding(bottom = 5.dp)) {
+                        Text(
+                            text = "Genre:",
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                        Text(
+                            text = performance.artist.genre,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Row {
+                        Text(
+                            text = "Date:",
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                        Text(
+                            text = performance.date,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
                 }
             }
 

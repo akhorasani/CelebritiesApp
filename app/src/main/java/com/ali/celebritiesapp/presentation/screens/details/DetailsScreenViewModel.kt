@@ -11,11 +11,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ali.celebritiesapp.common.Resource
 import com.ali.celebritiesapp.data.remote.model.Artist
-import com.ali.celebritiesapp.data.remote.model.Performance
+import com.ali.celebritiesapp.data.remote.model.ArtistPerformance
 import com.ali.celebritiesapp.data.remote.model.Venue
+import com.ali.celebritiesapp.data.remote.model.VenuePerformance
 import com.ali.celebritiesapp.domain.model.ArtistItem
-import com.ali.celebritiesapp.domain.model.PerformanceItem
+import com.ali.celebritiesapp.domain.model.ArtistPerformanceItem
 import com.ali.celebritiesapp.domain.model.VenueItem
+import com.ali.celebritiesapp.domain.model.VenuePerformanceItem
 import com.ali.celebritiesapp.domain.repository.CelebritiesRepository
 import com.ali.celebritiesapp.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +33,6 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
     ViewModel() {
     private val _currentDate = MutableLiveData<String>()
     private val _futureDate = MutableLiveData<String>()
-//    val currentDate: LiveData<String> = _currentDate
     var artistInfo: ArtistItem by mutableStateOf(
         ArtistItem(
             genre = "",
@@ -48,8 +49,9 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
             imageUrl = ""
         )
     )
-    var performances: List<PerformanceItem> by mutableStateOf(emptyList())
-    var isLoading: Boolean by mutableStateOf(true)
+    var artistPerformances: List<ArtistPerformanceItem> by mutableStateOf(emptyList())
+    var venuePerformances: List<VenuePerformanceItem> by mutableStateOf(emptyList())
+    private var isLoading: Boolean by mutableStateOf(true)
 
     init {
         calculateCurrentDate()
@@ -106,13 +108,13 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
                             generateArtistPerformancesImages(response.data)
                             isLoading = false
                         } else {
-                            Log.d("Network", "showVenues: Failed to load venues")
+                            Log.d("Network", "showPerformances: Failed to load performances")
                         }
                     }
 
                     is Resource.Error -> {
                         isLoading = false
-                        Log.d("Network", "showVenues: Failed to load venues")
+                        Log.d("Network", "showPerformances: Failed to load performances")
                     }
 
                     else -> {
@@ -120,7 +122,7 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
                     }
                 }
             } catch (e: Exception) {
-                Log.d("Network", "showVenues: ${e.message.toString()}")
+                Log.d("Network", "showPerformances: ${e.message.toString()}")
             }
         }
     }
@@ -155,9 +157,50 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
         }
     }
 
-    private fun generateArtistPerformancesImages(performances: List<Performance>) {
-        this.performances = performances.map { performance ->
-            PerformanceItem(
+    fun getVenuePerformances(
+        id: Int,
+        from: String? = null,
+        to: String? = null
+    ) {
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                var fromDate = _currentDate.value.toString()
+                var toDate = _futureDate.value.toString()
+                if (!from.isNullOrEmpty()) {
+                    fromDate = from
+                }
+                if (!to.isNullOrEmpty()) {
+                    toDate = to
+                }
+
+                when (val response = repository.getVenuePerformances(id, fromDate, toDate)) {
+                    is Resource.Success -> {
+                        if (!response.data.isNullOrEmpty()) {
+                            generateVenuePerformancesImages(response.data)
+                            isLoading = false
+                        } else {
+                            Log.d("Network", "showPerformances: Failed to load performances")
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        isLoading = false
+                        Log.d("Network", "showPerformances: Failed to load performances")
+                    }
+
+                    else -> {
+                        isLoading = false
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("Network", "showPerformances: ${e.message.toString()}")
+            }
+        }
+    }
+
+    private fun generateArtistPerformancesImages(performances: List<ArtistPerformance>) {
+        this.artistPerformances = performances.map { performance ->
+            ArtistPerformanceItem(
                 artistId = performance.artistId,
                 date = performance.date,
                 id = performance.id,
@@ -170,6 +213,23 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
             )
         }
     }
+
+    private fun generateVenuePerformancesImages(performances: List<VenuePerformance>) {
+        this.venuePerformances = performances.map { performance ->
+            VenuePerformanceItem(
+                artist = ArtistItem(
+                    genre = performance.artist.genre,
+                    id = performance.artist.id,
+                    name = performance.artist.name,
+                    imageUrl = Constants.IMAGE_BASE_URL + Constants.ARTISTS + performance.artist.name + Constants.PNG
+                ),
+                date = performance.date,
+                id = performance.id,
+                venueId = performance.venueId,
+            )
+        }
+    }
+
 
     private fun calculateCurrentDate() {
         val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
