@@ -1,6 +1,5 @@
 package com.ali.celebritiesapp.presentation.screens.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,18 +20,16 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(private val repository: CelebritiesRepository) :
     ViewModel() {
-
     var artists: List<ArtistItem> by mutableStateOf(emptyList())
     var venues: List<VenueItem> by mutableStateOf(emptyList())
-
     var isLoading: Boolean by mutableStateOf(true)
 
     init {
-        getArtists()
-        getVenues()
+        getArtists {}
+        getVenues {}
     }
 
-    private fun getArtists() {
+    fun getArtists(onErrorResult: (Resource.Error<String>) -> Unit) {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 when (val response = repository.getArtists()) {
@@ -44,13 +41,13 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                                 })
                             isLoading = false
                         } else {
-                            Log.d("Network", "showArtists: Failed to load artists")
+                            onErrorResult(Resource.Error(message = "showArtists: Failed to load artists"))
                         }
                     }
 
                     is Resource.Error -> {
                         isLoading = false
-                        Log.d("Network", "showArtists: Failed to load artists")
+                        onErrorResult(Resource.Error(message = "showArtists: Failed to load artists"))
                     }
 
                     else -> {
@@ -58,12 +55,12 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                     }
                 }
             } catch (e: Exception) {
-                Log.d("Network", "showArtists: ${e.message.toString()}")
+                onErrorResult(Resource.Error(message = "showArtists: Failed to load artists"))
             }
         }
     }
 
-    private fun getVenues() {
+    fun getVenues(onErrorResult: (Resource.Error<String>) -> Unit) {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 when (val response = repository.getVenues()) {
@@ -75,13 +72,13 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                                 })
                             isLoading = false
                         } else {
-                            Log.d("Network", "showVenues: Failed to load venues")
+                            onErrorResult(Resource.Error(message = "showVenues: Failed to load venues"))
                         }
                     }
 
                     is Resource.Error -> {
                         isLoading = false
-                        Log.d("Network", "showVenues: Failed to load venues")
+                        onErrorResult(Resource.Error(message = "showVenues: Failed to load venues"))
                     }
 
                     else -> {
@@ -89,7 +86,7 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                     }
                 }
             } catch (e: Exception) {
-                Log.d("Network", "showVenues: ${e.message.toString()}")
+                onErrorResult(Resource.Error(message = "showVenues: Failed to load venues"))
             }
         }
     }
