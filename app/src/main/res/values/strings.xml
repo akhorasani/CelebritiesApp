@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Celebrities Application</string>
+    <string name="details_screen">Details Screen</string>
     <string name="splash_screen_description">Explore Celebrities Performances</string>
     <string name="artist_genre">Genre</string>
     <string name="artist_picture">Artist Picture</string>
     <string name="arrow_back">Arrow Back</string>
+    <string name="artist">Artist</string>
+    <string name="venue">Venue</string>
+    <string name="performances">Performances</string>
 </resources>

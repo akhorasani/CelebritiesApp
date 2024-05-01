@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel, onItemClicked: (Int) -> Unit) {
+fun HomeScreen(viewModel: HomeScreenViewModel, onItemClicked: (String, Int) -> Unit) {
     Scaffold(topBar = {
         CelebritiesTopAppBar(
             title = stringResource(id = R.string.app_name),

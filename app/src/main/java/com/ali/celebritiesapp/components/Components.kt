@@ -2,6 +2,7 @@ package com.ali.celebritiesapp.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,8 +18,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -94,7 +97,7 @@ fun CelebritiesTopAppBar(
 }
 
 @Composable
-fun ArtistList(viewModel: HomeScreenViewModel, onItemClicked: (Int) -> Unit) {
+fun ArtistList(viewModel: HomeScreenViewModel, onItemClicked: (String, Int) -> Unit) {
     val listOfArtists = viewModel.artists.toMutableList()
     if (viewModel.isLoading) {
         CircularProgressIndicator()
@@ -111,14 +114,14 @@ fun ArtistList(viewModel: HomeScreenViewModel, onItemClicked: (Int) -> Unit) {
 }
 
 @Composable
-fun ArtistRow(artist: ArtistItem, onItemClicked: (Int) -> Unit) {
+fun ArtistRow(artist: ArtistItem, onItemClicked: (String , Int) -> Unit) {
     Card(modifier = Modifier
-        .clickable {
-            onItemClicked(artist.id)
-        }
-        .fillMaxWidth()
-        .height(110.dp)
-        .padding(5.dp),
+    .clickable {
+        onItemClicked("Artist", artist.id)
+    }
+    .fillMaxWidth()
+    .height(110.dp)
+    .padding(5.dp),
 //        colors = CardDefaults.cardColors(containerColor = Color(0xFF673AB7)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF8000ff)),
         shape = RectangleShape,
@@ -162,7 +165,7 @@ fun ArtistRow(artist: ArtistItem, onItemClicked: (Int) -> Unit) {
 
 
 @Composable
-fun VenueList(viewModel: HomeScreenViewModel, onItemClicked: (Int) -> Unit) {
+fun VenueList(viewModel: HomeScreenViewModel, onItemClicked: (String, Int) -> Unit) {
     val listOfVenues = viewModel.venues.toMutableList()
     if (viewModel.isLoading) {
         CircularProgressIndicator()
@@ -179,10 +182,10 @@ fun VenueList(viewModel: HomeScreenViewModel, onItemClicked: (Int) -> Unit) {
 }
 
 @Composable
-fun VenueRow(venue: VenueItem, onItemClicked: (Int) -> Unit) {
+fun VenueRow(venue: VenueItem, onItemClicked: (String, Int) -> Unit) {
     Card(modifier = Modifier
         .clickable {
-            onItemClicked(venue.id)
+            onItemClicked("Venue", venue.id)
         }
         .fillMaxWidth()
         .height(110.dp)
@@ -219,4 +222,64 @@ fun VenueRow(venue: VenueItem, onItemClicked: (Int) -> Unit) {
         }
     }
 }
+
+@Composable
+fun ArtistDetails(artist: ArtistItem) {
+    Column(
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        DetailsTopRow(artist.name, artist.imageUrl)
+    }
+}
+
+@Composable
+fun VenueDetails(venue: VenueItem) {
+    Column(
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        DetailsTopRow(venue.name, venue.imageUrl)
+        Spacer(modifier = Modifier.height(14.dp))
+
+    }
+}
+
+@Composable
+fun DetailsTopRow(name: String, imageUrl: String) {
+    Text(
+        text = name,
+        overflow = TextOverflow.Ellipsis,
+        fontWeight = FontWeight.Bold,
+        color = Color.Black,
+        style = MaterialTheme.typography.titleLarge,
+        maxLines = 1,
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
+    Surface(modifier = Modifier.fillMaxWidth()) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUrl)
+                .crossfade(true)
+                .transformations(CircleCropTransformation())
+                .build(),
+            contentDescription = stringResource(id = R.string.artist_picture),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+        )
+    }
+    Spacer(modifier = Modifier.height(14.dp))
+    HorizontalDivider()
+    Spacer(modifier = Modifier.height(14.dp))
+    Text(
+        text = stringResource(id = R.string.performances),
+        fontWeight = FontWeight.Bold,
+        color = Color(0xFF7D0C91),
+        style = MaterialTheme.typography.headlineLarge,
+    )
+}
+
 

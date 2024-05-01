@@ -26,23 +26,28 @@ fun CelebritiesNavigation() {
 
         composable(CelebritiesScreens.HomeScreen.name) {
             val viewModel = hiltViewModel<HomeScreenViewModel>()
-            HomeScreen(viewModel = viewModel) { entityId ->
-                navController.navigate("${CelebritiesScreens.DetailsScreen.name}/${entityId}")
+            HomeScreen(viewModel = viewModel) { type, entityId ->
+                navController.navigate("${CelebritiesScreens.DetailsScreen.name}/${type}/${entityId}")
             }
         }
 
         val detailsScreen = CelebritiesScreens.DetailsScreen.name
         composable(
-            route = "$detailsScreen/{entityId}",
+            route = "$detailsScreen/{type}/{entityId}",
             arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                },
                 navArgument("entityId") {
                     type = NavType.IntType
                 })
         ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")
             val entityId = backStackEntry.arguments?.getInt("entityId")
+            val viewModel = hiltViewModel<HomeScreenViewModel>()
 
-            if (entityId != null) {
-                DetailsScreen(navController = navController, entityId = entityId)
+            if (entityId != null && type != null) {
+                DetailsScreen(navController = navController, type = type, entityId = entityId, viewModel = viewModel)
             }
         }
     }
