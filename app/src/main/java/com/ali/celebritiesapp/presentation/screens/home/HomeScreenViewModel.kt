@@ -38,7 +38,10 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                 when (val response = repository.getArtists()) {
                     is Resource.Success -> {
                         if (!response.data.isNullOrEmpty()) {
-                            generateArtistImage(response.data)
+                            generateArtistImage(
+                                response.data.sortedBy { artist ->
+                                    artist.name
+                                })
                             isLoading = false
                         } else {
                             Log.d("Network", "showArtists: Failed to load artists")
@@ -66,7 +69,10 @@ class HomeScreenViewModel @Inject constructor(private val repository: Celebritie
                 when (val response = repository.getVenues()) {
                     is Resource.Success -> {
                         if (!response.data.isNullOrEmpty()) {
-                            generateVenueImage(response.data)
+                            generateVenueImage(
+                                response.data.sortedBy { venue ->
+                                    venue.sortId
+                                })
                             isLoading = false
                         } else {
                             Log.d("Network", "showVenues: Failed to load venues")

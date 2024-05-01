@@ -20,11 +20,11 @@ import com.ali.celebritiesapp.domain.model.VenueItem
 import com.ali.celebritiesapp.domain.model.VenuePerformanceItem
 import com.ali.celebritiesapp.domain.repository.CelebritiesRepository
 import com.ali.celebritiesapp.utils.Constants
+import com.ali.celebritiesapp.utils.calculateCurrentDate
+import com.ali.celebritiesapp.utils.calculateFutureDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -54,8 +54,8 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
     private var isLoading: Boolean by mutableStateOf(true)
 
     init {
-        calculateCurrentDate()
-        calculateFutureDate()
+        _currentDate.value = calculateCurrentDate("yyyy-MM-dd")
+        _futureDate.value = calculateFutureDate("yyyy-MM-dd")
     }
 
     fun getArtistById(id: Int) {
@@ -105,7 +105,10 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
                 when (val response = repository.getArtistPerformances(id, fromDate, toDate)) {
                     is Resource.Success -> {
                         if (!response.data.isNullOrEmpty()) {
-                            generateArtistPerformancesImages(response.data)
+                            generateArtistPerformancesImages(
+                                response.data.sortedBy { performance ->
+                                    performance.date
+                                })
                             isLoading = false
                         } else {
                             Log.d("Network", "showPerformances: Failed to load performances")
@@ -176,7 +179,10 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
                 when (val response = repository.getVenuePerformances(id, fromDate, toDate)) {
                     is Resource.Success -> {
                         if (!response.data.isNullOrEmpty()) {
-                            generateVenuePerformancesImages(response.data)
+                            generateVenuePerformancesImages(
+                                response.data.sortedBy { performance ->
+                                    performance.date
+                                })
                             isLoading = false
                         } else {
                             Log.d("Network", "showPerformances: Failed to load performances")
@@ -228,19 +234,6 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Celebri
                 venueId = performance.venueId,
             )
         }
-    }
-
-
-    private fun calculateCurrentDate() {
-        val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        _currentDate.value = formattedDate
-    }
-
-    private fun calculateFutureDate() {
-        val currentDate = LocalDate.now()
-        val futureDate = currentDate.plusDays(13)
-        val formattedFutureDate = futureDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        _futureDate.value = formattedFutureDate
     }
 
     private fun mapToArtistItem(artist: Artist): ArtistItem {

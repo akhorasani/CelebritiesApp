@@ -1,5 +1,7 @@
 package com.ali.celebritiesapp.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +52,7 @@ import com.ali.celebritiesapp.domain.model.ArtistPerformanceItem
 import com.ali.celebritiesapp.domain.model.VenueItem
 import com.ali.celebritiesapp.domain.model.VenuePerformanceItem
 import com.ali.celebritiesapp.presentation.screens.home.HomeScreenViewModel
+import com.ali.celebritiesapp.utils.formatMyDateTime
 
 @Composable
 fun CelebritiesAppLogo(modifier: Modifier = Modifier) {
@@ -74,7 +77,7 @@ fun CelebritiesTopAppBar(
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 if (icon != null) {
                     Icon(
@@ -126,7 +129,6 @@ fun ArtistRow(artist: ArtistItem, onItemClicked: (String, Int) -> Unit) {
         .fillMaxWidth()
         .height(110.dp)
         .padding(5.dp),
-//        colors = CardDefaults.cardColors(containerColor = Color(0xFF673AB7)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF8000ff)),
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(defaultElevation = 7.dp)
@@ -145,7 +147,9 @@ fun ArtistRow(artist: ArtistItem, onItemClicked: (String, Int) -> Unit) {
                 modifier = Modifier
                     .height(150.dp)
             )
-            Column(modifier = Modifier.padding(start = 8.dp)) {
+            Column(
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
                 Text(
                     text = artist.name,
                     overflow = TextOverflow.Ellipsis,
@@ -194,7 +198,6 @@ fun VenueRow(venue: VenueItem, onItemClicked: (String, Int) -> Unit) {
         .fillMaxWidth()
         .height(110.dp)
         .padding(5.dp),
-//        colors = CardDefaults.cardColors(containerColor = Color(0xFF673AB7)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF8000ff)),
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(defaultElevation = 7.dp)
@@ -227,6 +230,7 @@ fun VenueRow(venue: VenueItem, onItemClicked: (String, Int) -> Unit) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ArtistDetails(artist: ArtistItem, performances: List<ArtistPerformanceItem>) {
     Column(
@@ -240,6 +244,7 @@ fun ArtistDetails(artist: ArtistItem, performances: List<ArtistPerformanceItem>)
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun VenueDetails(venue: VenueItem, performances: List<VenuePerformanceItem>) {
     Column(
@@ -288,6 +293,7 @@ fun DetailsTopRow(name: String, imageUrl: String) {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ArtistPerformances(performances: List<ArtistPerformanceItem>) {
     LazyRow {
@@ -338,7 +344,7 @@ fun ArtistPerformances(performances: List<ArtistPerformanceItem>) {
                             modifier = Modifier.padding(start = 8.dp)
                         )
                         Text(
-                            text = performance.date,
+                            text = formatMyDateTime(performance.date),
                             overflow = TextOverflow.Ellipsis,
                             color = Color.Black,
                             style = MaterialTheme.typography.bodyLarge,
@@ -353,6 +359,7 @@ fun ArtistPerformances(performances: List<ArtistPerformanceItem>) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun VenuePerformances(performances: List<VenuePerformanceItem>) {
     LazyRow {
@@ -420,7 +427,7 @@ fun VenuePerformances(performances: List<VenuePerformanceItem>) {
                             modifier = Modifier.padding(start = 8.dp)
                         )
                         Text(
-                            text = performance.date,
+                            text = formatMyDateTime(performance.date),
                             overflow = TextOverflow.Ellipsis,
                             color = Color.Black,
                             style = MaterialTheme.typography.bodyLarge,
@@ -429,7 +436,6 @@ fun VenuePerformances(performances: List<VenuePerformanceItem>) {
                     }
                 }
             }
-
         }
     }
 }
